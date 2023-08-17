@@ -6,6 +6,8 @@ const connectDB = (url) => {
     useCreateIndex: true,
     useFindAndModify: false,
     useUnifiedTopology: true,
+    autoIndex: true,
+
   });
 };
 

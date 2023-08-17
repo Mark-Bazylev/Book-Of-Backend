@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const FriendsData = require("../models/FriendsData");
 const Account = require("../models/Account");
+const Post = require("../models/Post");
 
 const getFriendsData = async (req, res) => {
   const {

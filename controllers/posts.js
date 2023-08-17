@@ -4,6 +4,13 @@ const { BadRequestError, NotFoundError } = require("../errors");
 const FriendsData = require("../models/FriendsData");
 const Account = require("../models/Account");
 
+const getUserPosts = async (req, res) => {
+  const {
+    params: { id: userId },
+  } = req;
+  const posts = await Post.find({ createdBy: userId }).sort("createdAt");
+  res.status(StatusCodes.OK).json({ posts, count: posts.length });
+};
 const getFriendsPosts = async (req, res) => {
   const {
     user: { userId },
@@ -19,9 +26,7 @@ const getAllPosts = async (req, res) => {
     user: { userId },
   } = req;
 
-  const posts = await Post.find({ createdBy: req.user.userId }).sort(
-    "createdAt"
-  );
+  const posts = await Post.find({ createdBy: userId }).sort("createdAt");
 
   res.status(StatusCodes.OK).json({ posts, count: posts.length });
 };
@@ -82,7 +87,7 @@ const likePost = async (req, res) => {
     user: { userId },
     body: { postId },
   } = req;
-  const post = await Post.findById(postId );
+  const post = await Post.findById(postId);
   const isAlreadyLiked = !!post.likes.find((id) => id.toString() === userId);
   if (!isAlreadyLiked) {
     post.likes.push(userId);
@@ -90,7 +95,7 @@ const likePost = async (req, res) => {
   } else {
     console.log("already liked");
   }
-  console.log(postId)
+  console.log(postId);
   res.status(StatusCodes.OK).json(post);
 };
 const unlikePost = async (req, res) => {
@@ -108,14 +113,15 @@ const unlikePost = async (req, res) => {
   } else {
     console.log("already unliked");
   }
-  console.log(postId)
+  console.log(postId);
 
-  res.status(StatusCodes.OK).json( post );
+  res.status(StatusCodes.OK).json(post);
 };
 
 module.exports = {
   getAllPosts,
   getFriendsPosts,
+  getUserPosts,
   getPost,
   getLikes,
   createPost,
