@@ -19,10 +19,13 @@ const postsRouter = require("./routes/posts");
 const accountsRouter = require("./routes/accounts");
 const friendsDataRouter = require("./routes/friendsData");
 const commentsRouter = require("./routes/comments");
+const chatRouter=require("./routes/chat")
 
 //Error Handler
 const notFoundMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
+const initializeSocket = require("./socket");
+const {createServer} = require("http");
 
 app.set("trust proxy", 1);
 app.use(
@@ -43,15 +46,19 @@ app.use("/api/v1/posts", authenticateUser, postsRouter);
 app.use("/api/v1/accounts", authenticateUser, accountsRouter);
 app.use("/api/v1/friendsRequest", authenticateUser, friendsDataRouter);
 app.use("/api/v1/comments", authenticateUser, commentsRouter);
+app.use("/api/v1/chat", authenticateUser, chatRouter);
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
 const port = process.env.PORT || 3000;
+const server= createServer(app)
+
 
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
-    app.listen(port, () =>
+    initializeSocket(server)
+    server.listen(port, () =>
       console.log(`Server is listening on port ${port}...`)
     );
   } catch (error) {
